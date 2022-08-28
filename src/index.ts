@@ -1,26 +1,15 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
+dotenv.config();
 import fs from "fs";
 import multer from "multer";
 import path from "path";
+import { storage } from "./utility/storage";
 
 const app: Express = express();
 const port = process.env.PORT || 8000;
 
-let storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "./images");
-  },
-  filename: (req, file, cb) => {
-    cb(
-      null,
-      // hash the file name - the same as what is currently being done for s3
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname),
-    );
-  },
-});
-
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage() });
 
 // makes all images public
 app.use("/static", express.static(path.join(__dirname, "images")));
@@ -46,10 +35,14 @@ app.post(
   "/saveImage",
   upload.single("file"),
   function (req: Request, res: Response) {
-    console.log("testing");
-    // may want to send file cb to a function module
-    // console.log("storage location is ", req.hostname + "/" + req.file.path);
-    return res.send(req.file);
+    if (!req.file) res.send({ status: 400 });
+    const { name, userId } = req.body;
+    fs.renameSync(
+      // TODO: do not cast to string
+      req.file?.path as string,
+      `images/${userId}-${name}`,
+    );
+    return res.send({ status: 200, file: req.file });
   },
 );
 
