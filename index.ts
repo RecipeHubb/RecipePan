@@ -1,14 +1,13 @@
-(import express from "express").config()
-import dotenv  from "dotenv";
+import express, { Express, Request, Response } from "express";
+import dotenv from "dotenv";
 import fs from "fs";
 import multer from "multer";
 import path from "path";
 
-const app = express();
+const app: Express = express();
 const port = process.env.PORT || 8000;
-const upload = multer({ storage: storage });
 
-const storage = multer.diskStorage({
+let storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, "./images");
   },
@@ -21,22 +20,38 @@ const storage = multer.diskStorage({
   },
 });
 
+const upload = multer({ storage: storage });
+
 // makes all images public
 app.use("/static", express.static(path.join(__dirname, "images")));
 
-app.get("/", (req, res) => {
+app.get("/", (req: Request, res: Response) => {
   res.send("RecipePan 3rd Party");
 });
 
 // if was sending images individually per file name
-// app.get("/image", (req, res) => {
-//   res.sendFile(path.resolve("./images/wp.jpg"));
-// });
+app.get("/images", (req: Request, res: Response) => {
+  fs.readdir(path.join(__dirname, "images"), (err, files) => {
+    if (err) {
+      throw err;
+    }
 
-app.post("/saveImage", upload.single("file"), function (req, res) {
-  // may want to send file cb to a function module
-  console.log("storage location is ", req.hostname + "/" + req.file.path);
-  return res.send(req.file);
+    res.send({
+      files,
+    });
+  });
 });
 
+app.post(
+  "/saveImage",
+  upload.single("file"),
+  function (req: Request, res: Response) {
+    console.log("testing");
+    // may want to send file cb to a function module
+    // console.log("storage location is ", req.hostname + "/" + req.file.path);
+    return res.send(req.file);
+  },
+);
+
+console.log("Running with port", port);
 app.listen(port);
