@@ -12,7 +12,7 @@ const port = process.env.PORT || 8000;
 const upload = multer({ storage: storage() });
 
 // makes all images public
-app.use("/static", express.static(path.join(__dirname, "images")));
+app.use("/static", express.static(path.join(__dirname, "../images")));
 
 app.get("/", (req: Request, res: Response) => {
   res.send("RecipePan 3rd Party");
@@ -40,7 +40,7 @@ app.post(
     fs.renameSync(
       // TODO: do not cast to string
       req.file?.path as string,
-      `images/${userId}-${name}`,
+      `images/${userId}-${name}.jpg`,
     );
     return res.send({ status: 200, file: req.file });
   },
