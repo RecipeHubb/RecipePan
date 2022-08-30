@@ -1,13 +1,11 @@
-app = "recipepan"
+# fly.toml file generated for testing-pocketbase on 2022-08-30T13:42:59-06:00
+
+app ="recipepan" 
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
-[build]
-  builder = "heroku/buildpacks:20"
-
 [env]
-  PORT = "8090"
 
 [experimental]
   allowed_public_ports = []
@@ -38,3 +36,7 @@ processes = []
     interval = "15s"
     restart_limit = 0
     timeout = "2s"
+
+ [mounts]
+ source = "data"
+ destination = "/pb_data"
