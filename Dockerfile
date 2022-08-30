@@ -2,7 +2,7 @@ FROM alpine:latest
 
 COPY ./pocketbase /pocketbase
 
-EXPOSE 8080
+EXPOSE 8090
 VOLUME ["/pb_data"]
 
-CMD ./pocketbase serve
+CMD [ "./pocketbase", "serve", "--http=0.0.0.0:8090" ]

@@ -1,11 +1,13 @@
-# fly.toml file generated for testing-pocketbase on 2022-08-30T13:42:59-06:00
-
-app = "testing-pocketbase"
+app = "recipepan"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
+[build]
+  builder = "heroku/buildpacks:20"
+
 [env]
+  PORT = "8090"
 
 [experimental]
   allowed_public_ports = []
@@ -13,7 +15,7 @@ processes = []
 
 [[services]]
   http_checks = []
-  internal_port = 8080
+  internal_port = 8090
   processes = ["app"]
   protocol = "tcp"
   script_checks = []
