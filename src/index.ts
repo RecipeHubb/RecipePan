@@ -1,12 +1,13 @@
-import express, { Express, Request, Response } from "express";
-import dotenv from "dotenv";
+import express from "express";
+// import { Express, Request, Response } from "express";
+import * as dotenv from "dotenv";
 dotenv.config();
-import fs from "fs";
+import * as fs from "fs";
 import multer from "multer";
-import path from "path";
+import * as path from "path";
 import { storage } from "./utility/storage";
 
-const app: Express = express();
+const app = express();
 const port = process.env.PORT || 8000;
 
 const upload = multer({ storage: storage() });
@@ -14,12 +15,12 @@ const upload = multer({ storage: storage() });
 // makes all images public
 app.use("/static", express.static(path.join(__dirname, "../images")));
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (req: any, res: any) => {
   res.send("RecipePan 3rd Party");
 });
 
 // if was sending images individually per file name
-app.get("/images", (req: Request, res: Response) => {
+app.get("/images", (req: any, res: any) => {
   fs.readdir(path.join(__dirname, "images"), (err, files) => {
     if (err) {
       throw err;
@@ -34,7 +35,7 @@ app.get("/images", (req: Request, res: Response) => {
 app.post(
   "/saveImage",
   upload.single("file"),
-  function (req: Request, res: Response) {
+  function (req: any, res: any) {
     if (!req.file) res.send({ status: 400 });
     const { name, userId } = req.body;
     fs.renameSync(
@@ -46,5 +47,4 @@ app.post(
   },
 );
 
-console.log("Running with port", port);
-app.listen(port);
+app.listen(port, () => console.log(`Listening on http://localhost:${port}`));

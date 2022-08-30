@@ -1,4 +1,4 @@
-import multer from "multer";
+import * as multer from "multer";
 
 export function storage() {
   return multer.diskStorage({
